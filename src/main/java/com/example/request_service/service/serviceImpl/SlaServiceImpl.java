@@ -5,11 +5,9 @@ import com.example.request_service.entity.Category;
 import com.example.request_service.entity.SlaRule;
 import com.example.request_service.enums.RequestPriority;
 import com.example.request_service.exceptions.NotFoundException;
-import com.example.request_service.mapper.CategoryMapper;
 import com.example.request_service.mapper.SlaRuleMapper;
 import com.example.request_service.repository.CategoryRepository;
 import com.example.request_service.repository.SlaRuleRepository;
-import com.example.request_service.service.CategoryService;
 import com.example.request_service.service.SlaService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +21,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SlaServiceImpl implements SlaService {
 
-  private final CategoryService categoryService;
   private final SlaRuleRepository slaRuleRepository;
   private final CategoryRepository categoryRepository;
   private final SlaRuleMapper slaRuleMapper;
-  private final CategoryMapper categoryMapper;
 
   @Override
   @Transactional
@@ -60,6 +56,6 @@ public class SlaServiceImpl implements SlaService {
   @Override
   public LocalDateTime calculateDeadline(Category category, RequestPriority priority) {
     SlaRuleDto slaRuleDto = getSlaRule(category.getCode(), priority);
-    return LocalDateTime.now().plusMinutes(slaRuleDto.getResponseTimeMinutes());
+    return LocalDateTime.now().plusMinutes(slaRuleDto.getExecutionTimeMinutes());
   }
 }

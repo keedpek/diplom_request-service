@@ -8,12 +8,10 @@ import com.example.request_service.entity.Request;
 import com.example.request_service.enums.RequestPriority;
 import com.example.request_service.enums.RequestStatus;
 import com.example.request_service.exceptions.NotFoundException;
-import com.example.request_service.mapper.CategoryMapper;
 import com.example.request_service.mapper.RequestMapper;
 import com.example.request_service.repository.CategoryRepository;
 import com.example.request_service.repository.RequestRepository;
 import com.example.request_service.repository.specifications.RequestSpecifications;
-import com.example.request_service.service.CategoryService;
 import com.example.request_service.service.RequestService;
 import com.example.request_service.service.SlaService;
 import jakarta.transaction.Transactional;
@@ -32,8 +30,6 @@ public class RequestServiceImpl implements RequestService {
   private final RequestRepository requestRepository;
   private final SlaService slaService;
   private final RequestMapper requestMapper;
-  private final CategoryService categoryService;
-  private final CategoryMapper categoryMapper;
   private final CategoryRepository categoryRepository;
 
 
