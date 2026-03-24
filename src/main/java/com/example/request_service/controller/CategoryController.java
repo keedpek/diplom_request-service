@@ -2,6 +2,7 @@ package com.example.request_service.controller;
 
 import com.example.request_service.DTO.CategoryDto;
 import com.example.request_service.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,12 +15,12 @@ public class CategoryController {
 
   private final CategoryService categoryService;
 
-  @PostMapping("")
-  public CategoryDto create(@RequestBody CategoryDto categoryDto) {
+  @PostMapping
+  public CategoryDto create(@Valid @RequestBody CategoryDto categoryDto) {
     return categoryService.create(categoryDto);
   }
 
-  @GetMapping("")
+  @GetMapping
   public List<CategoryDto> getAll() {
     return categoryService.getAll();
   }

@@ -4,7 +4,11 @@ import com.example.request_service.DTO.request.CreateRequestDto;
 import com.example.request_service.DTO.request.RequestFilter;
 import com.example.request_service.DTO.request.RequestResponseDto;
 import com.example.request_service.service.RequestService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,13 +17,14 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/requests")
+@Validated
 public class RequestController {
 
   private final RequestService requestService;
 
-  @PostMapping("")
+  @PostMapping
   public RequestResponseDto create(
-          @RequestBody CreateRequestDto createRequestDto
+          @Valid @RequestBody CreateRequestDto createRequestDto
   ) {
     return requestService.create(createRequestDto);
   }
@@ -29,15 +34,19 @@ public class RequestController {
     return requestService.getById(id);
   }
 
-  @GetMapping("")
-  public List<RequestResponseDto> getAll(RequestFilter filter) {
+  @GetMapping
+  public List<RequestResponseDto> getAll(@Valid RequestFilter filter) {
     return requestService.getAll(filter);
   }
 
   @PutMapping("{id}/status")
   public RequestResponseDto updateStatus(
           @PathVariable("id") UUID id,
-          @RequestParam String status
+          @RequestParam
+          @Pattern(
+                  regexp = "^(NEW|ASSIGNED|IN_PROGRESS|WAITING_FOR_RESPONSE|COMPLETED|CANCELLED)$",
+                  message = "Некорректный статус заявки")
+          String status
   ) {
     return requestService.updateStatus(id, status);
   }
@@ -45,7 +54,7 @@ public class RequestController {
   @PostMapping("{id}/assign")
   public void assign(
           @PathVariable("id") UUID requestId,
-          @RequestParam UUID executorId
+          @RequestParam @NotNull(message = "Идентификатор исполнителя обязателен") UUID executorId
   ) {
     requestService.assign(requestId, executorId);
   }
