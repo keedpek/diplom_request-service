@@ -71,7 +71,7 @@ public class RequestServiceImpl implements RequestService {
     Request request = findById(id);
     request.setStatus(RequestStatus.valueOf(status));
     request.setUpdatedAt(LocalDateTime.now());
-    return requestMapper.toDto(requestRepository.save(request));
+    return requestMapper.toDto(request);
   }
 
   @Override
@@ -80,6 +80,7 @@ public class RequestServiceImpl implements RequestService {
     Request request = findById(requestId);
     request.setAssignedToUserId(executorId);
     request.setStatus(RequestStatus.ASSIGNED);
+    request.setUpdatedAt(LocalDateTime.now());
   }
 
   private Request findById(UUID id) {

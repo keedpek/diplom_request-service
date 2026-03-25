@@ -10,27 +10,26 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "requests")
 @Getter
 @Setter
+@Table(name = "requests")
 public class Request {
 
   @Id
   @GeneratedValue
   private UUID id;
 
-  @Column(nullable = false, length = 255)
+  @Column(nullable = false)
   private String title;
 
-  @Column(columnDefinition = "TEXT")
   private String description;
 
-  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private RequestStatus status;
 
-  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private RequestPriority priority;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -40,7 +39,6 @@ public class Request {
   @Column(nullable = false)
   private UUID createdByUserId;
 
-  @Column
   private UUID assignedToUserId;
 
   @Column(nullable = false, updatable = false)

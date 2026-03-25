@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/sla")
-@Validated
 public class SlaController {
 
   private final SlaService slaService;
@@ -33,12 +33,18 @@ public class SlaController {
 
   @GetMapping("rule")
   public SlaRuleDto getSlaRule(
-          @RequestParam @NotBlank(message = "Код категории обязателен") @Size(
+          @RequestParam
+          @NotBlank(message = "Код категории обязателен")
+          @Size(
                   max = 64,
-                  message = "Код категории не длиннее 64 символов") String categoryCode,
-          @RequestParam @NotBlank(message = "Приоритет обязателен") @Pattern(
+                  message = "Код категории не длиннее 64 символов"
+          ) String categoryCode,
+          @RequestParam
+          @NotBlank(message = "Приоритет обязателен")
+          @Pattern(
                   regexp = "(?i)^(LOW|MEDIUM|HIGH|CRITICAL)$",
-                  message = "Приоритет: LOW, MEDIUM, HIGH или CRITICAL") String priority
+                  message = "Приоритет: LOW, MEDIUM, HIGH или CRITICAL"
+          ) String priority
   ) {
     return slaService.getSlaRule(
             categoryCode,

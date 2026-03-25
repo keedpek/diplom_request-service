@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/requests")
-@Validated
 public class RequestController {
 
   private final RequestService requestService;
@@ -39,14 +39,14 @@ public class RequestController {
     return requestService.getAll(filter);
   }
 
-  @PutMapping("{id}/status")
+  @PatchMapping("{id}/status")
   public RequestResponseDto updateStatus(
           @PathVariable("id") UUID id,
           @RequestParam
           @Pattern(
                   regexp = "^(NEW|ASSIGNED|IN_PROGRESS|WAITING_FOR_RESPONSE|COMPLETED|CANCELLED)$",
-                  message = "Некорректный статус заявки")
-          String status
+                  message = "Некорректный статус заявки"
+          ) String status
   ) {
     return requestService.updateStatus(id, status);
   }

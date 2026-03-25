@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "sla_rules")
 @Getter
 @Setter
+@Table(name = "sla_rules")
 public class SlaRule {
 
   @Id
@@ -19,8 +19,8 @@ public class SlaRule {
   @JoinColumn(name = "category_id", nullable = false)
   private Category category;
 
-  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private RequestPriority priority;
 
   @Column(nullable = false)

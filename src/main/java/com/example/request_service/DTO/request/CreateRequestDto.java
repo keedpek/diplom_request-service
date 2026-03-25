@@ -27,7 +27,8 @@ public class CreateRequestDto {
   @NotBlank(message = "Приоритет обязателен")
   @Pattern(
           regexp = "(?i)^(LOW|MEDIUM|HIGH|CRITICAL)$",
-          message = "Приоритет: LOW, MEDIUM, HIGH или CRITICAL")
+          message = "Приоритет: LOW, MEDIUM, HIGH или CRITICAL"
+  )
   private String priority;
 
   @NotNull(message = "Идентификатор автора обязателен")

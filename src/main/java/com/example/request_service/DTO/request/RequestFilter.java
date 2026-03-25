@@ -13,12 +13,14 @@ public class RequestFilter {
 
   @Pattern(
           regexp = "^(NEW|ASSIGNED|IN_PROGRESS|WAITING_FOR_RESPONSE|COMPLETED|CANCELLED)$",
-          message = "Некорректный статус заявки")
+          message = "Некорректный статус заявки"
+  )
   private String status;
 
   @Pattern(
           regexp = "^(LOW|MEDIUM|HIGH|CRITICAL)$",
-          message = "Некорректный приоритет")
+          message = "Некорректный приоритет"
+  )
   private String priority;
 
   @Size(max = 64, message = "Код категории не длиннее 64 символов")

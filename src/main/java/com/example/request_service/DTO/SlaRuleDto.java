@@ -19,7 +19,8 @@ public class SlaRuleDto {
   @NotBlank(message = "Приоритет обязателен")
   @Pattern(
           regexp = "(?i)^(LOW|MEDIUM|HIGH|CRITICAL)$",
-          message = "Приоритет: LOW, MEDIUM, HIGH или CRITICAL")
+          message = "Приоритет: LOW, MEDIUM, HIGH или CRITICAL"
+  )
   private String priority;
 
   @Min(value = 1, message = "Время реакции не менее 1 минуты")
