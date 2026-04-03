@@ -23,3 +23,12 @@ spring:
     table: flyway_schema_history_request
     baseline-on-migrate: true
     baseline-version: 0
+
+logging:
+  level:
+    root: info
+    com.example: debug
+    org.springframework: warn
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

@@ -12,12 +12,14 @@ import com.example.request_service.repository.SlaRuleRepository;
 import com.example.request_service.service.SlaService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SlaServiceImpl implements SlaService {
@@ -29,49 +31,79 @@ public class SlaServiceImpl implements SlaService {
   @Override
   @Transactional
   public SlaRuleDto create(SlaRuleDto slaRuleDto) {
-    Category category = categoryRepository.findByCode(slaRuleDto.getCategoryCode())
-            .orElseThrow(() -> new NotFoundException("Категория не найдена"));
+    log.info(
+            "Создание SLA правила: category={}, priority={}",
+            slaRuleDto.getCategoryCode(),
+            slaRuleDto.getPriority()
+    );
+
+    Category category = getCategoryOrThrow(slaRuleDto.getCategoryCode());
 
     SlaRule slaRule = slaRuleMapper.toEntity(slaRuleDto);
     slaRule.setCategory(category);
 
-    return slaRuleMapper.toDto(slaRuleRepository.save(slaRule));
+    SlaRule slaRuleSaved = slaRuleRepository.save(slaRule);
+    log.info("SLA правило создано: category={}, priority={}", slaRuleSaved.getCategory(), slaRuleSaved.getPriority());
+    return slaRuleMapper.toDto(slaRuleSaved);
   }
 
   @Override
   public SlaRuleDto getSlaRule(SlaRequestDto slaRequestDto) {
-    Category category = categoryRepository.findByCode(slaRequestDto.getCategoryCode())
-            .orElseThrow(() -> new NotFoundException("Категория не найдена"));
+    getSlaRuleLog(slaRequestDto.getCategoryCode(), RequestPriority.valueOf(slaRequestDto.getPriority()));
 
-    SlaRule rule = slaRuleRepository
-            .findByCategoryAndPriority(
-                    category,
-                    RequestPriority.valueOf(slaRequestDto.getPriority().toUpperCase())
-            )
-            .orElseThrow(() -> new NotFoundException("Правило не найдено"));
+    Category category = getCategoryOrThrow(slaRequestDto.getCategoryCode());
+
+    SlaRule rule = getSlaRuleOrThrow(
+            category,
+            RequestPriority.valueOf(slaRequestDto.getPriority().toUpperCase())
+    );
 
     return slaRuleMapper.toDto(rule);
   }
 
   @Override
   public SlaRuleDto getSlaRule(String categoryCode, RequestPriority priority) {
-    Category category = categoryRepository.findByCode(categoryCode)
-            .orElseThrow(() -> new NotFoundException("Категория не найдена"));
+    getSlaRuleLog(categoryCode, priority);
 
-    SlaRule rule = slaRuleRepository.findByCategoryAndPriority(category, priority)
-            .orElseThrow(() -> new NotFoundException("Правило не найдено"));
-
+    Category category = getCategoryOrThrow(categoryCode);
+    SlaRule rule = getSlaRuleOrThrow(category, priority);
     return slaRuleMapper.toDto(rule);
   }
 
   @Override
   public List<SlaRuleDto> getAllSlaRules() {
+    log.debug("Получение всех SLA правил");
     return slaRuleRepository.findAll().stream().map(slaRuleMapper::toDto).collect(Collectors.toList());
   }
 
   @Override
   public LocalDateTime calculateDeadline(Category category, RequestPriority priority) {
+    log.debug("Расчет дедлайна: category={}, priority={}", category.getCode(), priority);
     SlaRuleDto slaRuleDto = getSlaRule(category.getCode(), priority);
     return LocalDateTime.now().plusMinutes(slaRuleDto.getExecutionTimeMinutes());
+  }
+
+  private Category getCategoryOrThrow(String categoryCode) {
+    return categoryRepository.findByCode(categoryCode)
+            .orElseThrow(() -> {
+              log.warn("Категория не найдена: {}", categoryCode);
+              return new NotFoundException("Категория не найдена");
+            });
+  }
+
+  private SlaRule getSlaRuleOrThrow(Category category, RequestPriority priority) {
+    return slaRuleRepository.findByCategoryAndPriority(category, priority)
+            .orElseThrow(() -> {
+              log.warn("SLA правило не найдено: category={}, priority={}", category.getCode(), priority);
+              return new NotFoundException("Правило не найдено");
+            });
+  }
+
+  private void getSlaRuleLog(String categoryCode, RequestPriority priority) {
+    log.debug(
+            "Получение SLA: category={}, priority={}",
+            categoryCode,
+            priority
+    );
   }
 }
