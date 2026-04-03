@@ -1,8 +1,6 @@
 package com.example.request_service.service.serviceImpl;
 
-import com.example.request_service.DTO.request.CreateRequestDto;
-import com.example.request_service.DTO.request.RequestFilter;
-import com.example.request_service.DTO.request.RequestResponseDto;
+import com.example.request_service.DTO.request.*;
 import com.example.request_service.entity.Category;
 import com.example.request_service.entity.Request;
 import com.example.request_service.enums.RequestPriority;
@@ -67,18 +65,18 @@ public class RequestServiceImpl implements RequestService {
 
   @Override
   @Transactional
-  public RequestResponseDto updateStatus(UUID id, String status) {
+  public RequestResponseDto updateStatus(UUID id, UpdateRequestStatusDto updateRequestStatusDto) {
     Request request = findById(id);
-    request.setStatus(RequestStatus.valueOf(status));
+    request.setStatus(RequestStatus.valueOf(updateRequestStatusDto.getStatus()));
     request.setUpdatedAt(LocalDateTime.now());
     return requestMapper.toDto(request);
   }
 
   @Override
   @Transactional
-  public void assign(UUID requestId, UUID executorId) {
+  public void assign(UUID requestId, AssignRequestDto assignRequestDto) {
     Request request = findById(requestId);
-    request.setAssignedToUserId(executorId);
+    request.setAssignedToUserId(assignRequestDto.getExecutorId());
     request.setStatus(RequestStatus.ASSIGNED);
     request.setUpdatedAt(LocalDateTime.now());
   }

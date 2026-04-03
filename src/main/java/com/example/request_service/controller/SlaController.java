@@ -1,22 +1,17 @@
 package com.example.request_service.controller;
 
-import com.example.request_service.DTO.SlaRuleDto;
-import com.example.request_service.enums.RequestPriority;
+import com.example.request_service.DTO.sla.SlaRequestDto;
+import com.example.request_service.DTO.sla.SlaRuleDto;
 import com.example.request_service.service.SlaService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/sla")
+@RequestMapping("/api/v1/sla")
 public class SlaController {
 
   private final SlaService slaService;
@@ -31,24 +26,6 @@ public class SlaController {
     return slaService.getAllSlaRules();
   }
 
-  @GetMapping("rule")
-  public SlaRuleDto getSlaRule(
-          @RequestParam
-          @NotBlank(message = "Код категории обязателен")
-          @Size(
-                  max = 64,
-                  message = "Код категории не длиннее 64 символов"
-          ) String categoryCode,
-          @RequestParam
-          @NotBlank(message = "Приоритет обязателен")
-          @Pattern(
-                  regexp = "(?i)^(LOW|MEDIUM|HIGH|CRITICAL)$",
-                  message = "Приоритет: LOW, MEDIUM, HIGH или CRITICAL"
-          ) String priority
-  ) {
-    return slaService.getSlaRule(
-            categoryCode,
-            RequestPriority.valueOf(priority.toUpperCase())
-    );
-  }
+  @GetMapping("/rule")
+  public SlaRuleDto getSlaRule(@Valid SlaRequestDto slaRequestDto) { return slaService.getSlaRule(slaRequestDto); }
 }

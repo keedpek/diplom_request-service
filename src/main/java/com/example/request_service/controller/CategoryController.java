@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/categories")
+@RequestMapping("/api/v1/categories")
 public class CategoryController {
 
   private final CategoryService categoryService;
@@ -25,7 +25,7 @@ public class CategoryController {
     return categoryService.getAll();
   }
 
-  @GetMapping("{code}")
+  @GetMapping("/{code}")
   public CategoryDto getByCode(@PathVariable("code") String code) {
     return categoryService.getByCode(code);
   }

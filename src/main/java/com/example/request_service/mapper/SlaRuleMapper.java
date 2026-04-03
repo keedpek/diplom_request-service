@@ -1,6 +1,6 @@
 package com.example.request_service.mapper;
 
-import com.example.request_service.DTO.SlaRuleDto;
+import com.example.request_service.DTO.sla.SlaRuleDto;
 import com.example.request_service.entity.SlaRule;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

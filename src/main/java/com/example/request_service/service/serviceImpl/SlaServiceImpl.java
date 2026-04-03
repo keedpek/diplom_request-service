@@ -1,6 +1,7 @@
 package com.example.request_service.service.serviceImpl;
 
-import com.example.request_service.DTO.SlaRuleDto;
+import com.example.request_service.DTO.sla.SlaRequestDto;
+import com.example.request_service.DTO.sla.SlaRuleDto;
 import com.example.request_service.entity.Category;
 import com.example.request_service.entity.SlaRule;
 import com.example.request_service.enums.RequestPriority;
@@ -38,12 +39,27 @@ public class SlaServiceImpl implements SlaService {
   }
 
   @Override
+  public SlaRuleDto getSlaRule(SlaRequestDto slaRequestDto) {
+    Category category = categoryRepository.findByCode(slaRequestDto.getCategoryCode())
+            .orElseThrow(() -> new NotFoundException("Категория не найдена"));
+
+    SlaRule rule = slaRuleRepository
+            .findByCategoryAndPriority(
+                    category,
+                    RequestPriority.valueOf(slaRequestDto.getPriority().toUpperCase())
+            )
+            .orElseThrow(() -> new NotFoundException("Правило не найдено"));
+
+    return slaRuleMapper.toDto(rule);
+  }
+
+  @Override
   public SlaRuleDto getSlaRule(String categoryCode, RequestPriority priority) {
     Category category = categoryRepository.findByCode(categoryCode)
             .orElseThrow(() -> new NotFoundException("Категория не найдена"));
 
-    SlaRule rule = slaRuleRepository.findByCategoryAndPriority(category, priority).
-            orElseThrow(() -> new NotFoundException("Правило не найдено"));
+    SlaRule rule = slaRuleRepository.findByCategoryAndPriority(category, priority)
+            .orElseThrow(() -> new NotFoundException("Правило не найдено"));
 
     return slaRuleMapper.toDto(rule);
   }

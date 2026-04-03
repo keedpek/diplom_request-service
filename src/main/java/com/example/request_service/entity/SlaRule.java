@@ -2,12 +2,14 @@ package com.example.request_service.entity;
 
 import com.example.request_service.enums.RequestPriority;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "sla_rules")
 public class SlaRule {
 

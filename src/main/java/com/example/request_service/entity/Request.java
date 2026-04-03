@@ -3,8 +3,7 @@ package com.example.request_service.entity;
 import com.example.request_service.enums.RequestPriority;
 import com.example.request_service.enums.RequestStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,6 +11,9 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "requests")
 public class Request {
 

@@ -1,4 +1,4 @@
-package com.example.request_service.DTO;
+package com.example.request_service.DTO.sla;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -6,9 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class SlaRuleDto {
 
