@@ -40,12 +40,4 @@ public class RequestController {
   ) {
     return requestService.updateStatus(id, updateRequestStatusDto);
   }
-
-  @PostMapping("/{id}/assign")
-  public void assign(
-          @PathVariable("id") UUID requestId,
-          @Valid @RequestBody AssignRequestDto assignRequestDto
-  ) {
-    requestService.assign(requestId, assignRequestDto);
-  }
 }
