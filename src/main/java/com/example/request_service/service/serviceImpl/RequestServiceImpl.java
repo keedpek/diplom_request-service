@@ -16,12 +16,12 @@ import com.example.request_service.messaging.event.payload.RequestStatusChangedE
 import com.example.request_service.repository.CategoryRepository;
 import com.example.request_service.repository.RequestRepository;
 import com.example.request_service.repository.specifications.RequestSpecifications;
+import com.example.request_service.service.KafkaOutboxService;
 import com.example.request_service.service.RequestService;
 import com.example.request_service.service.SlaService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ public class RequestServiceImpl implements RequestService {
   private final SlaService slaService;
   private final RequestMapper requestMapper;
   private final CategoryRepository categoryRepository;
-  private final KafkaTemplate<String, Object> kafkaTemplate;
+  private final KafkaOutboxService kafkaOutboxService;
 
 
   @Override
@@ -81,8 +81,8 @@ public class RequestServiceImpl implements RequestService {
                     .title(savedRequest.getTitle())
                     .build())
             .build();
-    kafkaTemplate.send("request.created", event);
-    log.info("Событие отправлено: id={}", event.getEventId());
+    kafkaOutboxService.save(event, "request.created", savedRequest.getId().toString());
+    log.info("Событие сохранено: id={}", event.getEventId());
     return requestMapper.toDto(savedRequest);
   }
 
@@ -127,7 +127,7 @@ public class RequestServiceImpl implements RequestService {
                     .userIds(List.of(request.getAssignedToUserId(), request.getCreatedByUserId()))
                     .build())
             .build();
-    kafkaTemplate.send("request.status.changed", event);
+    kafkaOutboxService.save(event, "request.status.changed", request.getId().toString());
     return requestMapper.toDto(request);
   }
 
@@ -157,7 +157,7 @@ public class RequestServiceImpl implements RequestService {
                     .title(request.getTitle())
                     .build())
             .build();
-    kafkaTemplate.send("request.assigned", assignmentEvent);
+    kafkaOutboxService.save(assignmentEvent, "request.assigned", request.getId().toString());
   }
 
   private Request findById(UUID id) {
