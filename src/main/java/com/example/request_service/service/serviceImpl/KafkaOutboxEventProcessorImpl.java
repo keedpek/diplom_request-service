@@ -1,9 +1,9 @@
 package com.example.request_service.service.serviceImpl;
 
+import com.example.request_service.config.OutboxConfig;
 import com.example.request_service.entity.KafkaOutboxEvent;
 import com.example.request_service.enums.KafkaOutboxStatus;
 import com.example.request_service.service.KafkaOutboxEventProcessor;
-import com.example.request_service.util.OutboxConstants;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +21,7 @@ public class KafkaOutboxEventProcessorImpl implements KafkaOutboxEventProcessor 
 
   private final EntityManager entityManager;
   private final KafkaTemplate<String, Object> kafkaTemplate;
+  private final OutboxConfig outboxConfig;
 
   @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -39,7 +40,7 @@ public class KafkaOutboxEventProcessorImpl implements KafkaOutboxEventProcessor 
   private void handleFailure(KafkaOutboxEvent event) {
     int retries = event.getRetryCount() + 1;
 
-    if (retries > OutboxConstants.MAX_RETRIES) {
+    if (retries > outboxConfig.getMaxRetries()) {
       event.setStatus(KafkaOutboxStatus.DEAD);
     } else {
       event.setStatus(KafkaOutboxStatus.NEW);

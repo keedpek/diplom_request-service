@@ -1,9 +1,10 @@
 package com.example.request_service.scheduler;
 
+import com.example.request_service.config.OutboxConfig;
 import com.example.request_service.entity.KafkaOutboxEvent;
 import com.example.request_service.repository.KafkaOutboxRepository;
 import com.example.request_service.service.KafkaOutboxEventProcessor;
-import com.example.request_service.util.OutboxConstants;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,12 +22,18 @@ public class KafkaOutboxScheduler {
 
   private final KafkaOutboxRepository kafkaOutboxRepository;
   private final KafkaOutboxEventProcessor eventProcessor;
+  private final OutboxConfig outboxConfig;
 
-  private final ExecutorService executorService = Executors.newFixedThreadPool(OutboxConstants.THREAD_POOL_SIZE);
+  private ExecutorService executorService;
 
-  @Scheduled(fixedRate = OutboxConstants.SCHEDULER_INTERVAL)
+  @PostConstruct
+  public void init() {
+    this.executorService = Executors.newFixedThreadPool(outboxConfig.getThreadPoolSize());
+  }
+
+  @Scheduled(fixedRateString = "${app.outbox.scheduler-interval-ms}")
   public void processEvents() {
-    List<KafkaOutboxEvent> events = kafkaOutboxRepository.lockBatch(OutboxConstants.BATCH_SIZE);
+    List<KafkaOutboxEvent> events = kafkaOutboxRepository.lockBatch(outboxConfig.getBatchSize());
     log.info("Обработка {} событий(-ия)", events.size());
 
     List<CompletableFuture<Void>> futures = events.stream()

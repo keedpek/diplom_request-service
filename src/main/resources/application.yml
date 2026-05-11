@@ -41,6 +41,13 @@ spring:
     listener:
       ack-mode: manual
 
+app:
+  outbox:
+    max-retries: 5
+    batch-size: 100
+    thread-pool-size: 10
+    scheduler-interval-ms: 5000
+
 logging:
   level:
     root: info

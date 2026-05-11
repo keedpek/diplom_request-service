@@ -81,7 +81,7 @@ public class RequestServiceImpl implements RequestService {
                     .title(savedRequest.getTitle())
                     .build())
             .build();
-    kafkaOutboxService.save(event, "request.created", savedRequest.getId().toString());
+    kafkaOutboxService.save(event, "request-created", savedRequest.getId().toString());
     log.info("Событие сохранено: id={}", event.getEventId());
     return requestMapper.toDto(savedRequest);
   }
@@ -127,7 +127,7 @@ public class RequestServiceImpl implements RequestService {
                     .userIds(List.of(request.getAssignedToUserId(), request.getCreatedByUserId()))
                     .build())
             .build();
-    kafkaOutboxService.save(event, "request.status.changed", request.getId().toString());
+    kafkaOutboxService.save(event, "request-status-changed", request.getId().toString());
     return requestMapper.toDto(request);
   }
 
@@ -157,7 +157,7 @@ public class RequestServiceImpl implements RequestService {
                     .title(request.getTitle())
                     .build())
             .build();
-    kafkaOutboxService.save(assignmentEvent, "request.assigned", request.getId().toString());
+    kafkaOutboxService.save(assignmentEvent, "request-assigned", request.getId().toString());
   }
 
   private Request findById(UUID id) {

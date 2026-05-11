@@ -16,7 +16,7 @@ public class KafkaEventListeners {
 
   private final RequestService requestService;
 
-  @KafkaListener(topics = "request.executor.found")
+  @KafkaListener(topics = "request-executor-found")
   public void onExecutorFound(
           EventDto<ExecutorFoundEventDto> event,
           Acknowledgment acknowledgment
